@@ -5,30 +5,45 @@ _Copy this recipe template to design and create two related database tables from
 ## 1. Extract nouns from the user stories or specification
 
 ```
-# EXAMPLE USER STORY:
-# (analyse only the relevant part - here the final line).
+As a Maker
+So that I can let people know what I am doing  
+I want to post a message (peep) to chitter
 
-As a music lover,
-So I can organise my records,
-I want to keep a list of albums' titles.
+As a maker
+So that I can see what others are saying  
+I want to see all peeps in reverse chronological order
 
-As a music lover,
-So I can organise my records,
-I want to keep a list of albums' release years.
+As a Maker
+So that I can better appreciate the context of a peep
+I want to see the time at which it was made
 
-As a music lover,
-So I can organise my records,
-I want to keep a list of artists' names.
+As a Maker
+So that I can post messages on Chitter as me
+I want to sign up for Chitter
 
-As a music lover,
-So I can organise my records,
-I want to know each album's artist.
+NB: Makers sign up to chitter with their email, password, name and a username
+
+HARDER
+
+As a Maker
+So that only I can post messages on Chitter as me
+I want to log in to Chitter
+
+As a Maker
+So that I can avoid others posting messages on Chitter as me
+I want to log out of Chitter
+
+ADVANCED
+
+As a Maker
+So that I can stay constantly tapped in to the shouty box of Chitter
+I want to receive an email if I am tagged in a Peep
 ```
 
 ```
 Nouns:
 
-album, title, release year, artist, name
+makers(users), peeps, (content), time,  email, password, name, username
 ```
 
 ## 2. Infer the Table Name and Columns
@@ -37,16 +52,16 @@ Put the different nouns in this table. Replace the example with your own nouns.
 
 | Record                | Properties          |
 | --------------------- | ------------------  |
-| album                 | title, release year
-| artist                | name
+| user                  | name, username, email, password
+| peep                  | content, time
 
-1. Name of the first table (always plural): `albums` 
+1. Name of the first table (always plural): `users` 
 
-    Column names: `title`, `release_year`
+    Column names: `name`, `username`, `email`, `password`
 
-2. Name of the second table (always plural): `artists` 
+2. Name of the second table (always plural): `peeps` 
 
-    Column names: `name`
+    Column names: `content`, `time`
 
 ## 3. Decide the column types.
 
@@ -59,14 +74,17 @@ Remember to **always** have the primary key `id` as a first column. Its type wil
 ```
 # EXAMPLE:
 
-Table: albums
-id: SERIAL
-title: text
-release_year: int
-
-Table: artists
+Table: users
 id: SERIAL
 name: text
+username: text
+email: text
+password: text
+
+Table: peeps
+id: SERIAL
+content: text
+time: timestamp
 ```
 
 ## 4. Decide on The Tables Relationship
@@ -89,14 +107,14 @@ Replace the relevant bits in this example with your own:
 ```
 # EXAMPLE
 
-1. Can one artist have many albums? YES
-2. Can one album have many artists? NO
+1. Can one user have many peeps? YES
+2. Can one peep have many users? NO
 
 -> Therefore,
--> An artist HAS MANY albums
--> An album BELONGS TO an artist
+-> A user HAS MANY peeps
+-> A peep BELONGS TO a user
 
--> Therefore, the foreign key is on the albums table.
+-> Therefore, the foreign key is on the peeps table.
 ```
 
 *If you can answer YES to the two questions, you'll probably have to implement a Many-to-Many relationship, which is more complex and needs a third table (called a join table).*
@@ -104,26 +122,32 @@ Replace the relevant bits in this example with your own:
 ## 4. Write the SQL.
 
 ```sql
--- EXAMPLE
--- file: albums_table.sql
+-- file: users_table.sql
 
 -- Replace the table name, columm names and types.
 
 -- Create the table without the foreign key first.
-CREATE TABLE artists (
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name text,
+  username text,
+  email text,
+  password text
 );
+```
+
+```sql
+-- file: peeps_table.sql
 
 -- Then the table with the foreign key.
-CREATE TABLE albums (
+CREATE TABLE peeps (
   id SERIAL PRIMARY KEY,
-  title text,
-  release_year int,
+  name text,
+  time timestamp,
 -- The foreign key name is always {other_table_singular}_id
-  artist_id int,
-  constraint fk_artist foreign key(artist_id)
-    references artists(id)
+  user_id int,
+  constraint fk_user foreign key(user_id)
+    references users(id)
     on delete cascade
 );
 
