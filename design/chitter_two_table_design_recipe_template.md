@@ -142,7 +142,7 @@ CREATE TABLE users (
 -- Then the table with the foreign key.
 CREATE TABLE peeps (
   id SERIAL PRIMARY KEY,
-  name text,
+  content text,
   time timestamp,
 -- The foreign key name is always {other_table_singular}_id
   user_id int,
