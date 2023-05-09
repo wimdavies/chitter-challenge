@@ -1,4 +1,4 @@
-# posts Model and Repository Classes Design Recipe
+# peeps Model and Repository Classes Design Recipe
 
 _Copy this recipe template to design and implement Model and Repository classes for a database table._
 
@@ -8,15 +8,13 @@ If the table is already created in the database, you can skip this step.
 
 Otherwise, [follow this recipe to design and create the SQL schema for your table](./single_table_design_recipe_template.md).
 
-*In this template, we'll use an example table `students`*
-
 ```
 # EXAMPLE
 
-Table: students
+Table: peeps
 
 Columns:
-id | name | cohort_name
+id | content | time | user_id
 ```
 
 ## 2. Create Test SQL seeds
@@ -26,8 +24,7 @@ Your tests will depend on data stored in PostgreSQL to run.
 If seed data is provided (or you already created it), you can skip this step.
 
 ```sql
--- EXAMPLE
--- (file: spec/seeds_{table_name}.sql)
+-- (file: spec/seeds_peeps.sql)
 
 -- Write your SQL seed here. 
 
@@ -35,19 +32,21 @@ If seed data is provided (or you already created it), you can skip this step.
 -- so we can start with a fresh state.
 -- (RESTART IDENTITY resets the primary key)
 
-TRUNCATE TABLE students RESTART IDENTITY; -- replace with your own table name.
+TRUNCATE TABLE peeps RESTART IDENTITY; -- replace with your own table name.
 
 -- Below this line there should only be `INSERT` statements.
 -- Replace these statements with your own seed data.
 
-INSERT INTO students (name, cohort_name) VALUES ('David', 'April 2022');
-INSERT INTO students (name, cohort_name) VALUES ('Anna', 'May 2022');
+INSERT INTO peeps (content, time, user_id) VALUES ('test post please ignore', '2023-05-01 08:00:00', '1');
+INSERT INTO peeps (content, time, user_id) VALUES ('Wow, can''t believe I''m really peeping', '2023-05-01 08:01:00', '1');
+INSERT INTO peeps (content, time, user_id) VALUES ('@sjmog I''m peeping too, it''s great! Everyone should peep.', '2023-05-01 08:02:00', '2');
+INSERT INTO peeps (content, time, user_id) VALUES ('@sjmog @wimdavies omg I''m peeping as well, can''t believe this is the future of communication. nothing could possibly go wrong from here onwards', '2023-05-01 08:02:00', '3');
 ```
 
 Run this SQL file on the database to truncate (empty) the table, and insert the seed data. Be mindful of the fact any existing records in the table will be deleted.
 
 ```bash
-psql -h 127.0.0.1 your_database_name < seeds_{table_name}.sql
+psql -h 127.0.0.1 your_database_name < seeds_peeps.sql
 ```
 
 ## 3. Define the class names
@@ -56,7 +55,7 @@ Usually, the Model class name will be the capitalised table name (single instead
 
 ```ruby
 # EXAMPLE
-# Table name: students
+# Table name: peeps
 
 # Model class
 # (in lib/student.rb)
@@ -75,7 +74,7 @@ Define the attributes of your Model class. You can usually map the table columns
 
 ```ruby
 # EXAMPLE
-# Table name: students
+# Table name: peeps
 
 # Model class
 # (in lib/student.rb)
@@ -105,7 +104,7 @@ Using comments, define the method signatures (arguments and return value) and wh
 
 ```ruby
 # EXAMPLE
-# Table name: students
+# Table name: peeps
 
 # Repository class
 # (in lib/student_repository.rb)
@@ -116,7 +115,7 @@ class StudentRepository
   # No arguments
   def all
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM students;
+    # SELECT id, name, cohort_name FROM peeps;
 
     # Returns an array of Student objects.
   end
@@ -125,7 +124,7 @@ class StudentRepository
   # One argument: the id (number)
   def find(id)
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM students WHERE id = $1;
+    # SELECT id, name, cohort_name FROM peeps WHERE id = $1;
 
     # Returns a single Student object.
   end
@@ -153,21 +152,21 @@ These examples will later be encoded as RSpec tests.
 # EXAMPLES
 
 # 1
-# Get all students
+# Get all peeps
 
 repo = StudentRepository.new
 
-students = repo.all
+peeps = repo.all
 
-students.length # =>  2
+peeps.length # =>  2
 
-students[0].id # =>  '1'
-students[0].name # =>  'David'
-students[0].cohort_name # =>  'April 2022'
+peeps[0].id # =>  '1'
+peeps[0].name # =>  'David'
+peeps[0].cohort_name # =>  'April 2022'
 
-students[1].id # =>  '2'
-students[1].name # =>  'Anna'
-students[1].cohort_name # =>  'May 2022'
+peeps[1].id # =>  '2'
+peeps[1].name # =>  'Anna'
+peeps[1].cohort_name # =>  'May 2022'
 
 # 2
 # Get a single student
@@ -196,15 +195,15 @@ This is so you get a fresh table contents every time you run the test suite.
 
 # file: spec/student_repository_spec.rb
 
-def reset_students_table
-  seed_sql = File.read('spec/seeds_students.sql')
+def reset_peeps_table
+  seed_sql = File.read('spec/seeds_peeps.sql')
   connection = PG.connect({ host: '127.0.0.1', dbname: 'student_directory' })
   connection.exec(seed_sql)
 end
 
 describe StudentRepository do
   before(:each) do 
-    reset_students_table
+    reset_peeps_table
   end
 
   # (your tests will go here).
