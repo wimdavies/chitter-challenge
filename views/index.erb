@@ -5,7 +5,7 @@
   <body>
     <h1>Welcome to Chitter!</h1>
     <h2>What's peeping?</h2>
-    <% @peeps.each do |peep| %>
+    <% @sorted_peeps.each do |peep| %>
       <div>
         <%= peep.content %>
       </div>

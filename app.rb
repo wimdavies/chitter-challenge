@@ -18,7 +18,7 @@ class Application < Sinatra::Base
 
     peep_repo = PeepRepository.new
 
-    @peeps = peep_repo.all
+    @sorted_peeps = peep_repo.all.sort_by(&:time)
 
     return erb(:index)
   end
