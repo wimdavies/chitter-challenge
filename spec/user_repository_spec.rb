@@ -2,7 +2,7 @@ require 'user'
 require 'user_repository'
 
 def reset_users_table
-  seed_sql = File.read('spec/seeds_users.sql')
+  seed_sql = File.read('spec/seeds/seeds_users.sql')
   connection = PG.connect({ host: '127.0.0.1', dbname: 'chitter_test' })
   connection.exec(seed_sql)
 end
@@ -17,7 +17,7 @@ describe UserRepository do
   end
   
   context "#all" do
-    xit "returns all users" do
+    it "returns all users" do
       repo = UserRepository.new
       
       users = repo.all
@@ -45,7 +45,7 @@ describe UserRepository do
   end
   
   context "#find" do
-    xit "returns the first user" do
+    it "returns the first user" do
       repo = UserRepository.new
 
       user = repo.find(1)
@@ -54,10 +54,10 @@ describe UserRepository do
       expect(user.name).to eq 'Sam Morgan'
       expect(user.username).to eq 'sjmog'
       expect(user.email).to eq 'sam@aol.com'
-      expect(user.password ).to eq 'password123'
+      expect(user.password).to eq 'password123'
     end
 
-    xit "returns the second user" do
+    it "returns the second user" do
       repo = UserRepository.new
 
       user = repo.find(2)
@@ -71,7 +71,7 @@ describe UserRepository do
   end
 
   context "create" do
-    xit "creates a new user" do
+    it "creates a new user" do
       repo = UserRepository.new
 
       user = User.new
