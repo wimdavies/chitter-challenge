@@ -50,4 +50,14 @@ describe Application do
       expect(response.body).to include('<input type="text" name="content">')
     end
   end
+
+  context "POST /peep" do
+    xit "" do
+      
+    end
+
+    xit "" do
+      
+    end
+  end
 end

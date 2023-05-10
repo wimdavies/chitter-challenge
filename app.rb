@@ -25,4 +25,8 @@ class Application < Sinatra::Base
   get '/peep' do
     return erb(:new_peep)
   end
+
+  post '/peep' do
+    
+  end
 end
