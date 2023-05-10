@@ -124,10 +124,13 @@ class UserRepository
     # Returns a single User object.
   end
 
-  # Add more methods below for each operation you'd like to implement.
+  # creates a new record on the database
+  def create(user)
+    # Executes the SQL query:
+    # INSERT INTO users (name, username, email, password) VALUES $1, $2, $3, $4;
 
-  # def create(user)
-  # end
+    # Returns nothing
+  end
 
   # def update(user)
   # end
@@ -144,37 +147,76 @@ Write Ruby code that defines the expected behaviour of the Repository class, fol
 These examples will later be encoded as RSpec tests.
 
 ```ruby
-# EXAMPLES
-
 # 1
 # Get all users
-
 repo = UserRepository.new
 
 users = repo.all
 
-users.length # =>  2
+users.length # =>  3
 
 users[0].id # =>  '1'
-users[0].name # =>  'David'
-users[0].username # =>  'April 2022'
+users[0].name # =>  'Sam Morgan'
+users[0].username # =>  'sjmog'
+users[0].email # =>  'sam@aol.com'
+users[0].password # =>  'password123'
 
 users[1].id # =>  '2'
-users[1].name # =>  'Anna'
-users[1].username # =>  'May 2022'
+users[1].name # =>  'Will Davies'
+users[1].username # =>  'wimdavies'
+users[1].email # =>  'will@aol.com'
+users[1].password # =>  'hunter2'
+
+users[2].id # =>  '3'
+users[2].name # =>  'Alice Wood'
+users[2].username # =>  'aliceswood'
+users[2].email # =>  'alice@aol.com'
+users[2].password # =>  'alicepass'
 
 # 2
-# Get a single user
-
+# Get the first user
 repo = UserRepository.new
 
 user = repo.find(1)
 
 user.id # =>  '1'
-user.name # =>  'David'
-user.username # =>  'April 2022'
+user.name # =>  'Sam Morgan'
+user.username # =>  'sjmog'
+user.email # =>  'sam@aol.com'
+user.password # =>  'password123'
 
-# Add more examples for each method
+# 3
+# Gets the second user
+repo = UserRepository.new
+
+user = repo.find(2)
+
+user.id # =>  '2'
+user.name # =>  'Will Davies'
+user.username # =>  'wimdavies'
+user.email # =>  'will@aol.com'
+user.password # =>  'hunter2'
+
+# 4
+# creates a new user
+repo = UserRepository.new
+
+user = User.new
+
+user.name = 'Caroline Evans'
+user.username = 'caro'
+user.email = 'caroline@aol.com'
+user.password = 'caropass'
+
+repo.create(user) # => nil
+
+last_user = repo.all.last
+
+last_user.name # => 'Caroline Evans'
+last_user.username # => 'caro'
+last_user.email # => 'caroline@aol.com'
+last_user.password # => 'caropass'
+
 ```
 
 Encode this example as a test.
@@ -186,13 +228,11 @@ Running the SQL code present in the seed file will empty the table and re-insert
 This is so you get a fresh table contents every time you run the test suite.
 
 ```ruby
-# EXAMPLE
-
 # file: spec/user_repository_spec.rb
 
 def reset_users_table
   seed_sql = File.read('spec/seeds_users.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'user_directory' })
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'chitter_test' })
   connection.exec(seed_sql)
 end
 
