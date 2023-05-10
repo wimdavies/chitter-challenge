@@ -7,7 +7,13 @@
     <h2>What's peeping?</h2>
     <% @sorted_peeps.each do |peep| %>
       <div>
-        <%= peep.content %>
+        <h3> 
+          <%= @user_repo.find(peep.user_id).name %> @<%= @user_repo.find(peep.user_id).username %> peeped:
+        </h3>
+        <p>
+          <%= peep.content %><br>
+          <%= peep.time %>
+        </p>
       </div>
     <% end %>
   </body>
