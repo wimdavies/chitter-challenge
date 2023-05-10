@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>Chitter</title>
+  </head>
+  <body>
+    <h1>Welcome to Chitter!</h1>
+    <h2>What's peeping?</h2>
+    <% @peeps.each do |peep| %>
+      <div>
+        <%= peep.content %>
+      </div>
+    <% end %>
+  </body>
+</html>
