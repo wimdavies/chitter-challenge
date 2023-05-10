@@ -127,7 +127,7 @@ class UserRepository
   # creates a new record on the database
   def create(user)
     # Executes the SQL query:
-    # INSERT INTO users (name, username, email, password) VALUES $1, $2, $3, $4;
+    # INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4);
 
     # Returns nothing
   end

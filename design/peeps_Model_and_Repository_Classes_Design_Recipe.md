@@ -38,9 +38,9 @@ TRUNCATE TABLE peeps RESTART IDENTITY; -- replace with your own table name.
 -- Replace these statements with your own seed data.
 
 INSERT INTO peeps (content, time, user_id) VALUES ('test post please ignore', '2023-05-01 08:00:00', '1');
-INSERT INTO peeps (content, time, user_id) VALUES ('Wow, can''t believe I''m really peeping', '2023-05-01 08:01:00', '1');
-INSERT INTO peeps (content, time, user_id) VALUES ('@sjmog I''m peeping too, it''s great! Everyone should peep.', '2023-05-01 08:02:00', '2');
-INSERT INTO peeps (content, time, user_id) VALUES ('@sjmog @wimdavies omg I''m peeping as well, can''t believe this is the future of communication. nothing could possibly go wrong from here onwards', '2023-05-01 08:02:00', '3');
+INSERT INTO peeps (content, time, user_id) VALUES ($$Wow, can't believe I'm really peeping$$, '2023-05-01 08:01:00', '1');
+INSERT INTO peeps (content, time, user_id) VALUES ($$@sjmog I'm peeping too, it's great! Everyone should peep.$$, '2023-05-01 08:02:00', '2');
+INSERT INTO peeps (content, time, user_id) VALUES ($$@sjmog @wimdavies omg I'm peeping as well, can't believe this is the future of communication. nothing could possibly go wrong from here onwards$$, '2023-05-01 08:05:00', '3');
 ```
 
 Run this SQL file on the database to truncate (empty) the table, and insert the seed data. Be mindful of the fact any existing records in the table will be deleted.
@@ -54,17 +54,16 @@ psql -h 127.0.0.1 your_database_name < seeds_peeps.sql
 Usually, the Model class name will be the capitalised table name (single instead of plural). The same name is then suffixed by `Repository` for the Repository class name.
 
 ```ruby
-# EXAMPLE
 # Table name: peeps
 
 # Model class
-# (in lib/student.rb)
-class Student
+# (in lib/peep.rb)
+class Peep
 end
 
 # Repository class
-# (in lib/student_repository.rb)
-class StudentRepository
+# (in lib/peep_repository.rb)
+class PeepRepository
 end
 ```
 
@@ -73,25 +72,24 @@ end
 Define the attributes of your Model class. You can usually map the table columns to the attributes of the class, including primary and foreign keys.
 
 ```ruby
-# EXAMPLE
 # Table name: peeps
 
 # Model class
-# (in lib/student.rb)
+# (in lib/peep.rb)
 
-class Student
+class Peep
 
   # Replace the attributes by your own columns.
-  attr_accessor :id, :name, :cohort_name
+  attr_accessor :content, :time, :user_id
 end
 
 # The keyword attr_accessor is a special Ruby feature
 # which allows us to set and get attributes on an object,
 # here's an example:
 #
-# student = Student.new
-# student.name = 'Jo'
-# student.name
+# peep = Peep.new
+# peep.name = 'Jo'
+# peep.name
 ```
 
 *You may choose to test-drive this class, but unless it contains any more logic than the example above, it is probably not needed.*
@@ -107,37 +105,41 @@ Using comments, define the method signatures (arguments and return value) and wh
 # Table name: peeps
 
 # Repository class
-# (in lib/student_repository.rb)
+# (in lib/peep_repository.rb)
 
-class StudentRepository
+class PeepRepository
 
   # Selecting all records
   # No arguments
   def all
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM peeps;
+    # SELECT id, content, time, user_id FROM peeps;
 
-    # Returns an array of Student objects.
+    # Returns an array of Peep objects.
   end
 
   # Gets a single record by its ID
   # One argument: the id (number)
   def find(id)
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM peeps WHERE id = $1;
+    # SELECT id, content, time, user_id FROM peeps WHERE id = $1;
 
-    # Returns a single Student object.
+    # Returns a single Peep object.
   end
 
-  # Add more methods below for each operation you'd like to implement.
+  # creates a new record on the database
+  # one argument: a Peep instance
+  def create(peep)
+    # Executes the SQL query:
+    # INSERT INTO peeps (content, time, user_id) VALUES ($1, $2, $3);
 
-  # def create(student)
+    # Returns nothing
+  end
+
+  # def update(peep)
   # end
 
-  # def update(student)
-  # end
-
-  # def delete(student)
+  # def delete(peep)
   # end
 end
 ```
@@ -149,37 +151,64 @@ Write Ruby code that defines the expected behaviour of the Repository class, fol
 These examples will later be encoded as RSpec tests.
 
 ```ruby
-# EXAMPLES
-
 # 1
 # Get all peeps
-
-repo = StudentRepository.new
+repo = PeepRepository.new
 
 peeps = repo.all
 
-peeps.length # =>  2
+peeps.length # =>  4
 
 peeps[0].id # =>  '1'
-peeps[0].name # =>  'David'
-peeps[0].cohort_name # =>  'April 2022'
+peeps[0].content # =>  'test post please ignore'
+peeps[0].time # =>  '2023-05-01 08:00:00'
+peeps[0].user_id # =>  '1'
 
 peeps[1].id # =>  '2'
-peeps[1].name # =>  'Anna'
-peeps[1].cohort_name # =>  'May 2022'
+peeps[1].content # =>  'Wow, can't believe I'm really peeping'
+peeps[1].time # =>  '2023-05-01 08:01:00'
+peeps[1].user_id # =>  '1'
+
+peeps[2].id # =>  '3'
+peeps[2].content # =>  '@sjmog I'm peeping too, it's great! Everyone should peep.'
+peeps[2].time # =>  '2023-05-01 08:02:00'
+peeps[2].user_id # =>  '2'
+
+peeps[3].id # =>  '4'
+peeps[3].content # =>  '@sjmog @wimdavies omg I'm peeping as well, can't believe this is the future of communication. nothing could possibly go wrong from here onwards'
+peeps[3].time # =>  '2023-05-01 08:05:00'
+peeps[3].user_id # =>  '3'
 
 # 2
-# Get a single student
+# Get a single peep
+repo = PeepRepository.new
 
-repo = StudentRepository.new
+peep = repo.find(1)
 
-student = repo.find(1)
+peep.id # =>  '1'
+peep.content # =>  'test post please ignore'
+peep.time # =>  '2023-05-01 08:00:00'
+peep.user_id # =>  '1'
 
-student.id # =>  '1'
-student.name # =>  'David'
-student.cohort_name # =>  'April 2022'
+# 3
+# creates a new peep
+repo = PeepRepository.new
 
-# Add more examples for each method
+peep = Peep.new
+
+peep.id = '5'
+peep.content = 'test'
+peep.time = '2023-05-01 08:07:00'
+peep.user_id = '1'
+
+repo.create(peep) # => nil
+
+last_peep = repo.all.last
+
+last_peep.id # =>  '5'
+last_peep.content # =>  'test'
+last_peep.time # =>  '2023-05-01 08:07:00'
+last_peep.user_id # =>  '1'
 ```
 
 Encode this example as a test.
@@ -191,18 +220,20 @@ Running the SQL code present in the seed file will empty the table and re-insert
 This is so you get a fresh table contents every time you run the test suite.
 
 ```ruby
-# EXAMPLE
-
-# file: spec/student_repository_spec.rb
+# file: spec/peep_repository_spec.rb
 
 def reset_peeps_table
-  seed_sql = File.read('spec/seeds_peeps.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'student_directory' })
+  seed_sql = File.read('spec/seeds/seeds_peeps.sql')
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'chitter_test' })
   connection.exec(seed_sql)
 end
 
-describe StudentRepository do
+describe PeepRepository do
   before(:each) do 
+    reset_peeps_table
+  end
+
+  after(:each) do 
     reset_peeps_table
   end
 
