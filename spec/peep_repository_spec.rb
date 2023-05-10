@@ -27,7 +27,7 @@ describe PeepRepository do
       expect(peeps[0].id).to eq '1'
       expect(peeps[0].content).to eq 'test post please ignore'
       expect(peeps[0].time).to eq '2023-05-01 08:00:00'
-      expect(peeps[0].user_id ).to eq '1'
+      expect(peeps[0].user_id).to eq '1'
 
       expect(peeps[1].id).to eq '2'
       expect(peeps[1].content).to eq "Wow, can't believe I'm really peeping"
@@ -47,7 +47,7 @@ describe PeepRepository do
   end
 
   context '#find' do
-    xit 'returns a peep' do
+    it 'returns a peep' do
       repo = PeepRepository.new
 
       peep = repo.find(1)
@@ -60,7 +60,7 @@ describe PeepRepository do
   end
 
   context "#create" do
-    xit "creates a new peep" do
+    it "creates a new peep" do
       repo = PeepRepository.new
 
       peep = Peep.new

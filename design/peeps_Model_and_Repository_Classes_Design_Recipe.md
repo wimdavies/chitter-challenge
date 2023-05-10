@@ -80,7 +80,7 @@ Define the attributes of your Model class. You can usually map the table columns
 class Peep
 
   # Replace the attributes by your own columns.
-  attr_accessor :content, :time, :user_id
+  attr_accessor :id, :content, :time, :user_id
 end
 
 # The keyword attr_accessor is a special Ruby feature
