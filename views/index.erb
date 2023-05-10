@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Chitter</title>
+    <title>Home | Chitter</title>
   </head>
   <body>
     <h1>Welcome to Chitter!</h1>
@@ -8,7 +8,9 @@
     <% @sorted_peeps.each do |peep| %>
       <div>
         <h3> 
-          <%= @user_repo.find(peep.user_id).name %> @<%= @user_repo.find(peep.user_id).username %> peeped:
+          <%= @user_repo.find(peep.user_id).name %> 
+          @<%= @user_repo.find(peep.user_id).username %>
+           peeped:
         </h3>
         <p>
           <%= peep.content %><br>

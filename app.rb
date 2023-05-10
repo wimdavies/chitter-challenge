@@ -21,4 +21,8 @@ class Application < Sinatra::Base
 
     return erb(:index)
   end
+
+  get '/peep' do
+    return erb(:new_peep)
+  end
 end

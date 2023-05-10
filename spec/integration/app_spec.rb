@@ -34,10 +34,20 @@ describe Application do
       response = get('/')
 
       expect(response.status).to eq(200)
-      expect(response.body).to include('<title>Chitter</title>')
+      expect(response.body).to include('<title>Home | Chitter</title>')
       expect(response.body).to include("<h2>What's peeping?</h2>")
       expect(response.body).to include("test post please ignore")
       expect(response.body).to include("Everyone should peep.")
+    end
+  end
+
+  context "GET /peep" do
+    it "returns the form to post a new peep" do
+      response = get('/peep')
+
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<form action="/peep" method="POST">')
+      expect(response.body).to include('<input type="text" name="content">')
     end
   end
 end
