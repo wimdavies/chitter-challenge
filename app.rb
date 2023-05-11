@@ -1,5 +1,7 @@
 require 'sinatra'
 require "sinatra/reloader"
+require 'time'
+require 'CGI'
 require_relative 'lib/database_connection'
 require_relative 'lib/user_repository'
 require_relative 'lib/peep_repository'
@@ -27,6 +29,33 @@ class Application < Sinatra::Base
   end
 
   post '/peep' do
-    
+    if peep_invalid_request_parameters?
+      status 400 
+
+      return ""
+    end
+
+    content = CGI.escapeHTML(params[:content])
+    user_id = params[:user_id]
+
+    new_peep = Peep.new
+    new_peep.content = content
+    new_peep.time = Time.now
+    new_peep.user_id = user_id
+
+    repo = PeepRepository.new
+    repo.create(new_peep)
+
+    return erb(:peep_posted)
+  end
+
+  def peep_invalid_request_parameters?
+    # Are the params nil?
+    return true if params[:content] == nil || params[:user_id] == nil
+  
+    # Are they empty strings?
+    return true if params[:content] == "" || params[:user_id] == ""
+  
+    return false
   end
 end

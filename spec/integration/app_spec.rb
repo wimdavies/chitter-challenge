@@ -52,12 +52,41 @@ describe Application do
   end
 
   context "POST /peep" do
-    xit "" do
-      
+    it "returns a success page" do
+      response = post(
+        '/peep',
+        content: "omg a new peep",
+        user_id: "2"
+      )
+
+      expect(response.status).to eq 200
+      expect(response.body).to include "You just posted a peep!"
     end
 
-    xit "" do
-      
+    it "sanitises content by escaping HTML characters" do
+      response = post(
+        '/peep',
+        content: "<script>alert('Hello World!')</script>",
+        user_id: "2"
+      )
+
+      expect(response.status).to eq 200
+      expect(response.body).to include "You just posted a peep!"
+
+      response = get('/')
+
+      expect(response.status).to eq(200)
+      expect(response.body).to include("&lt;script&gt;alert(&#39;Hello World!&#39;)&lt;/script&gt;")
+    end
+
+    it "responds with 400 status if parameters are invalid" do
+      response = post(
+        '/peep',
+        invalid_param: "omg a new peep",
+        another_invalid_param: "2"
+      )
+
+      expect(response.status).to eq 400
     end
   end
 end
