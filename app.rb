@@ -1,5 +1,6 @@
 require 'sinatra'
 require "sinatra/reloader"
+require 'bcrypt'
 require 'time'
 require 'CGI'
 require_relative 'lib/database_connection'
@@ -51,6 +52,10 @@ class Application < Sinatra::Base
 
   get '/signup' do
     return erb(:signup)
+  end
+
+  post '/signup' do
+    return erb(:signup_success)
   end
 
   def peep_invalid_request_parameters?

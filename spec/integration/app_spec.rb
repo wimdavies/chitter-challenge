@@ -99,4 +99,31 @@ describe Application do
       expect(response.body).to include("<form action='/signup' method='POST'>")
     end
   end
+
+  context "POST /signup" do
+    it "returns a success page" do
+      response = post(
+        '/signup',
+        name: 'Caroline Evans',
+        username: "caro",
+        email: "caro@aol.com",
+        password: "password"
+      )
+
+      expect(response.status).to eq 200
+      expect(response.body).to include "Account created successfully!"
+    end
+
+    xit 'creates a new user on the database' do
+      response = post(
+        '/signup',
+        name: 'Caroline Evans',
+        username: "caro",
+        email: "caro@aol.com",
+        password: "password"
+      )
+
+
+    end
+  end
 end
