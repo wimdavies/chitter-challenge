@@ -49,6 +49,10 @@ class Application < Sinatra::Base
     return erb(:peep_posted)
   end
 
+  get '/signup' do
+    return erb(:signup)
+  end
+
   def peep_invalid_request_parameters?
     # Are the params nil?
     return true if params[:content] == nil || params[:user_id] == nil

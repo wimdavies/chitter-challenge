@@ -89,4 +89,14 @@ describe Application do
       expect(response.status).to eq 400
     end
   end
+
+  context "GET /signup" do
+    it "returns the sign-up form" do
+      response = get('/signup')
+
+      expect(response.status).to eq 200
+      expect(response.body).to include('<title>Sign up | Chitter')
+      expect(response.body).to include("<form action='/signup' method='POST'>")
+    end
+  end
 end
