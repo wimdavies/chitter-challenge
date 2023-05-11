@@ -55,6 +55,30 @@ class Application < Sinatra::Base
   end
 
   post '/signup' do
+    if user_invalid_request_parameters?
+      status 400 
+
+      return ""
+    end
+
+    name = params[:name]
+    username = params[:username]
+    email = params[:email]
+    plaintext_password = params[:password]
+
+    encrypted_password = BCrypt::Password.create(plaintext_password)
+
+    new_user = User.new
+
+    new_user.name = name
+    new_user.username = username
+    new_user.email = email
+    new_user.password = encrypted_password
+
+    user_repo = UserRepository.new
+
+    user_repo.create(new_user)
+
     return erb(:signup_success)
   end
 
@@ -65,6 +89,16 @@ class Application < Sinatra::Base
     # Are they empty strings?
     return true if params[:content] == "" || params[:user_id] == ""
   
+    return false
+  end
+
+  def user_invalid_request_parameters?
+    # Are the params nil?
+    return true if params[:name] == nil || params[:username] == nil || params[:email] == nil || params[:password] == nil
+
+    # Are they empty strings?
+    return true if params[:name] == "" || params[:username] == "" || params[:email] == "" || params[:password] == ""
+      
     return false
   end
 end

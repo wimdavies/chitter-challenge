@@ -1,5 +1,6 @@
 require "spec_helper"
 require "rack/test"
+require 'bcrypt'
 require_relative '../../app'
 
 def reset_users_table
@@ -101,6 +102,18 @@ describe Application do
   end
 
   context "POST /signup" do
+    it "responds with 400 status if parameters are invalid" do
+      response = post(
+        '/signup',
+        invalid_name: 'Caroline Evans',
+        invalid_username: "caro",
+        invalid_email: "caro@aol.com",
+        invalid_password: "password"
+      )
+
+      expect(response.status).to eq 400
+    end
+
     it "returns a success page" do
       response = post(
         '/signup',
@@ -114,16 +127,27 @@ describe Application do
       expect(response.body).to include "Account created successfully!"
     end
 
-    xit 'creates a new user on the database' do
+    it 'creates a new user on the database' do
+      plaintext_password = 'password'
+      
       response = post(
         '/signup',
         name: 'Caroline Evans',
         username: "caro",
         email: "caro@aol.com",
-        password: "password"
+        password: plaintext_password
       )
 
+      user_repo = UserRepository.new
+      new_user = user_repo.all.last
 
+      expect(response.status).to eq 200
+
+      # Check that the encrypted password is not the same as the plain text password
+      expect(new_user.password).not_to eq(plaintext_password)
+
+      # Check that the encrypted password can be authenticated using BCrypt
+      expect(BCrypt::Password.new(new_user.password)).to eq(plaintext_password)
     end
   end
 end
